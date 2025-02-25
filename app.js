@@ -1,5 +1,8 @@
 //Music Data
-const musicData = [
+
+let currentGenre = 'western';
+let currentFilter = 'mood';
+const westernData = [
   // Stereotypical delightful classical music
   { title: "Battalia a 10 in D Major", composer: "Biber", mood: "delightful", tags: ["baroque", "orchestral"] },
   { title: "Brandenburg Concerto No. 5", composer: "Bach", mood: "delightful", tags: ["baroque", "concerto"] },
@@ -123,45 +126,229 @@ const musicData = [
   { title: "4'33\"", composer: "Cage", mood: "hate", tags: ["silence", "avant-garde"] }
 ];
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-  // Load moods
-  const moods = [
-    "delightful", "chill", "sleep", "wakeup", "proud", "excited", 
+const indianData = [ 
+  { 
+  title: "Tilak Kamod", 
+  mood: "calm", 
+  time: "evening", 
+  season: "monsoon", 
+  tags: ["romantic", "devotional", "slow-tempo"] 
+},
+{ 
+  title: "Hamsadhwani", 
+  mood: "happy", 
+  time: "night", 
+  season: "all-seasons", 
+  tags: ["joyful", "celebratory", "fast-tempo"] 
+},
+{ 
+  title: "Desh", 
+  mood: "longing", 
+  time: "late-evening", 
+  season: "monsoon", 
+  tags: ["rain", "melancholic", "moderate-tempo"] 
+},
+{ 
+  title: "Yaman", 
+  mood: "serene", 
+  time: "evening", 
+  season: "winter", 
+  tags: ["romantic", "meditative", "slow-tempo"] 
+},
+{ 
+  title: "Rageshree", 
+  mood: "peaceful", 
+  time: "night", 
+  season: "autumn", 
+  tags: ["introspective", "calm", "moderate-tempo"] 
+},
+{ 
+  title: "Jog", 
+  mood: "spiritual", 
+  time: "late-night", 
+  season: "all-seasons", 
+  tags: ["meditative", "slow-tempo", "devotional"] 
+},
+{ 
+  title: "Marwa", 
+  mood: "intense", 
+  time: "sunset", 
+  season: "winter", 
+  tags: ["restless", "dramatic", "moderate-tempo"] 
+},
+{ 
+  title: "Lalit", 
+  mood: "mystical", 
+  time: "dawn", 
+  season: "spring", 
+  tags: ["contemplative", "transitional", "slow-tempo"] 
+},
+{ 
+  title: "Malkauns", 
+  mood: "introspective", 
+  time: "midnight", 
+  season: "winter", 
+  tags: ["somber", "deep", "slow-tempo"] 
+},
+{ 
+  title: "Shree", 
+  mood: "melancholic", 
+  time: "evening", 
+  season: "autumn", 
+  tags: ["devotional", "sad", "moderate-tempo"] 
+},
+{ 
+  title: "Basant Mukhari", 
+  mood: "hopeful", 
+  time: "morning", 
+  season: "spring", 
+  tags: ["renewal", "bright", "fast-tempo"] 
+},
+{ 
+  title: "Miyan ki Todi", 
+  mood: "tensed", 
+  time: "morning", 
+  season: "winter", 
+  tags: ["pathos", "devotional", "slow-tempo"] 
+},
+
+// Additional traditional seasonal/time-based ragas
+{ 
+  title: "Megh", 
+  mood: "joyful", 
+  time: "afternoon", 
+  season: "monsoon", 
+  tags: ["stormy", "rain-celebration", "energetic"] 
+},
+{ 
+  title: "Malhar", 
+  mood: "euphoric", 
+  time: "afternoon", 
+  season: "monsoon", 
+  tags: ["festive", "rain", "fast-tempo"] 
+},
+{ 
+  title: "Bahar", 
+  mood: "fresh", 
+  time: "spring-morning", 
+  season: "spring", 
+  tags: ["blossoming", "vibrant", "moderate-tempo"] 
+},
+{ 
+  title: "Hemant", 
+  mood: "reflective", 
+  time: "early-morning", 
+  season: "winter", 
+  tags: ["calm", "cool", "slow-tempo"] 
+},
+{ 
+  title: "Puriya Dhanashri", 
+  mood: "contemplative", 
+  time: "sunset", 
+  season: "autumn", 
+  tags: ["mystical", "transitional", "moderate-tempo"] 
+},
+{ 
+  title: "Darbari Kanada", 
+  mood: "sorrowful", 
+  time: "late-night", 
+  season: "winter", 
+  tags: ["grand", "profound", "slow-tempo"] 
+},
+{ 
+  title: "Brindavani Sarang", 
+  mood: "uplifting", 
+  time: "late-morning", 
+  season: "summer", 
+  tags: ["sunny", "energetic", "bright"] 
+}
+];
+const filterOptions = {
+  western: {
+    mood: ["delightful", "chill", "sleep", "wakeup", "proud", "excited", 
     "angry", "cry", "adventure", "chills", "study", "dance", 
     "bounce", "energy", "suspense", "jazzy", "emotional", 
-    "relax", "misc", "cool", "concertos", "hate"
-  ];
+    "relax", "misc", "cool", "concertos", "hate"],
+    time: [], // Western music doesn't typically have time associations
+    season: []
+  },
+  indian: {
+    mood: ['calm', 'happy', 'longing', 'serene', 'introspective', 'tensed'],
+    time: ['morning', 'afternoon', 'evening', 'night', 'midnight'],
+    season: ['spring', 'summer', 'monsoon', 'autumn', 'winter']
+  }
+};
 
-  const moodContainer = document.getElementById('moods');
-  moods.forEach(mood => {
-    const button = document.createElement('button');
-    button.textContent = mood;
-    button.onclick = () => showRecommendations(mood);
-    moodContainer.appendChild(button);
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  // Genre selection
+  document.querySelectorAll('.genre-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentGenre = btn.dataset.genre;
+      updateFilterButtons();
+    });
   });
 
-  // Load custom collection from localStorage
+  // Filter type selection
+  document.getElementById('filterType').addEventListener('change', (e) => {
+    currentFilter = e.target.value;
+    updateFilterButtons();
+  });
+
+  updateFilterButtons();
   loadCustomCollection();
 });
 
+function updateFilterButtons() {
+  const container = document.getElementById('filterButtons');
+  container.innerHTML = '';
+  
+  const filters = filterOptions[currentGenre][currentFilter];
+  if (filters.length === 0) {
+    container.innerHTML = '<p>No filters available for this category</p>';
+    return;
+  }
+
+  filters.forEach(filter => {
+    const button = document.createElement('button');
+    button.textContent = filter;
+    button.onclick = () => showRecommendations(filter);
+    container.appendChild(button);
+  });
+}
+
 // Showing recommendations
-function showRecommendations(mood) {
+function showRecommendations(filterValue) {
   const container = document.getElementById('recommendations');
   container.innerHTML = '<h3>Suggested Pieces:</h3>';
   
-  // Combine predefined and custom music
-  const allMusic = [...musicData, ...getCustomCollection()];
-  
-  allMusic.filter(piece => piece.mood === mood).forEach(piece => {
-      const div = document.createElement('div');
-      div.className = 'music-item';
-      div.innerHTML = `
-          <strong>${piece.title}</strong> - ${piece.composer}
-          <div class="rating">${createRatingStars(piece)}</div>
-          <div>Tags: ${piece.tags.join(', ')}</dv>
-      `;
-      container.appendChild(div);
+  const dataset = currentGenre === 'western' ? westernData : indianData;
+  const allMusic = [...dataset, ...getCustomCollection()];
+
+  allMusic.filter(piece => {
+    if (currentFilter === 'mood') return piece.mood === filterValue;
+    if (currentFilter === 'time') return piece.time === filterValue;
+    if (currentFilter === 'season') return piece.season === filterValue;
+    return false;
+  }).forEach(piece => {
+    const div = document.createElement('div');
+    div.className = 'music-item';
+    
+    // Create YouTube search link
+    const searchQuery = encodeURIComponent(`${piece.title} ${piece.composer}`);
+    const youtubeLink = `https://www.youtube.com/results?search_query=${searchQuery}`;
+    
+    div.innerHTML = `
+      <strong>${piece.title}</strong> - ${piece.composer}
+      <div class="rating">${createRatingStars(piece)}</div>
+      <div>Tags: ${piece.tags.join(', ')}</div>
+      <a href="${youtubeLink}" target="_blank" class="youtube-button">
+        Listen on YouTube
+      </a>
+    `;
+    container.appendChild(div);
   });
 }
 

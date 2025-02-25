@@ -11,12 +11,28 @@
 <body>
   <div class="container">
     <h1>🎵 Music Mood Matcher</h1>
-
-    <!-- Mood Selection -->
     <div class="section">
+      <h2>Select Music Genre:</h2>
+      <div id="genreSelector" class="mood-buttons">
+        <button class="genre-btn active" data-genre="western">Western Classical</button>
+        <button class="genre-btn" data-genre="indian">Indian Classical</button>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Filter By:</h2>
+      <select id="filterType">
+        <option value="mood">Mood</option>
+        <option value="time">Time</option>
+        <option value="season">Season</option>
+      </select>
+      <div id="filterButtons" class="mood-buttons"></div>
+    </div>
+    <!-- Mood Selection -->
+    <!-- <div class="section">
       <h2>Select Your Mood:</h2>
       <div id="moods" class="mood-buttons"></div>
-    </div>
+    </div> -->
 
     <!-- Recommendations -->
     <div class="section">
