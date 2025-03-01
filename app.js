@@ -688,7 +688,23 @@ const filterOptions = {
     season: ["spring", "summer", "monsoon", "autumn", "winter"],
   },
 };
-
+// Login
+document.getElementById('loginBtn').addEventListener('click', () => {
+  window.location.href = 'http://localhost:5000/auth/google';
+});
+// Check login status
+async function checkAuth() {
+  try {
+    const res = await fetch('http://localhost:5000/api/user', { credentials: 'include' });
+    if (res.ok) {
+      document.getElementById('loginBtn').hidden = true;
+      document.getElementById('logoutBtn').hidden = false;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+checkAuth();
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
   // Genre selection
